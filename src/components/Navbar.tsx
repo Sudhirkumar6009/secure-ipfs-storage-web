@@ -48,13 +48,14 @@ const Navbar = () => {
   };
 
   return (
-    <nav className={`w-full border-b transition-colors duration-200 ${
+    <nav className={`fixed top-0 left-0 right-0 z-50 w-full border-b transition-all duration-300 backdrop-blur-sm ${
       theme === 'dark' 
-        ? 'bg-black border-gray-800' 
-        : 'bg-white border-gray-200'
+        ? 'bg-black/90 border-gray-800' 
+        : 'bg-white/90 border-gray-200'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+          {/* Logo */}
           <Link 
             to="/" 
             className={`text-2xl font-bold transition-colors duration-200 ${
@@ -64,6 +65,7 @@ const Navbar = () => {
             StorageX
           </Link>
 
+          {/* Center section - User info and wallet status */}
           <div className="flex items-center space-x-4">
             {isAuthenticated && (
               <span className={`text-sm ${
@@ -95,18 +97,10 @@ const Navbar = () => {
             >
               {isConnected ? 'Disconnect' : 'Connect Wallet'}
             </Button>
+          </div>
 
-            <Button
-              onClick={toggleTheme}
-              variant="ghost"
-              size="sm"
-              className={`p-2 ${
-                theme === 'dark' ? 'text-[#00BFFF]' : 'text-[#00BFFF]'
-              }`}
-            >
-              {theme === 'dark' ? '☀️' : '🌙'}
-            </Button>
-
+          {/* Right section - Auth buttons and theme toggle */}
+          <div className="flex items-center space-x-2">
             {isAuthenticated ? (
               <div className="flex space-x-2">
                 <Link to="/dashboard">
@@ -164,6 +158,18 @@ const Navbar = () => {
                 </Link>
               </div>
             )}
+
+            {/* Theme toggle - moved to the far right */}
+            <Button
+              onClick={toggleTheme}
+              variant="ghost"
+              size="sm"
+              className={`p-2 ${
+                theme === 'dark' ? 'text-[#00BFFF]' : 'text-[#00BFFF]'
+              }`}
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </Button>
           </div>
         </div>
       </div>

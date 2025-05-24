@@ -28,7 +28,8 @@ const App = () => (
             <BrowserRouter>
               <div className="min-h-screen flex flex-col">
                 <Navbar />
-                <main className="flex-1">
+                {/* Add padding-top to account for fixed navbar */}
+                <main className="flex-1 pt-16">
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/login" element={<Login />} />
