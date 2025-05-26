@@ -1,84 +1,80 @@
+import React, { createContext, useContext } from 'react';
+import { useAccount, useConnect, useDisconnect, useAccountEffect } from "wagmi";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import Web3 from 'web3';
-
-interface Web3ContextType {
-  web3: Web3 | null;
-  account: string | null;
+interface IWeb3Context {
+  address?: string;
   isConnected: boolean;
-  connectWallet: () => Promise<void>;
+  connectWallet: () => void;
   disconnectWallet: () => void;
 }
 
-const Web3Context = createContext<Web3ContextType | undefined>(undefined);
-
-export const useWeb3 = () => {
-  const context = useContext(Web3Context);
-  if (!context) {
-    throw new Error('useWeb3 must be used within a Web3Provider');
-  }
-  return context;
-};
+const Web3Context = createContext<IWeb3Context | undefined>(undefined);
 
 export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [web3, setWeb3] = useState<Web3 | null>(null);
-  const [account, setAccount] = useState<string | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
+  const { address, isConnected } = useAccount();
+  const { connectors, connect, isPending } = useConnect();
+  const { disconnect } = useDisconnect();
 
-  useEffect(() => {
-    // Check if wallet is already connected
-    checkConnection();
-  }, []);
-
-  const checkConnection = async () => {
-    if (typeof window.ethereum !== 'undefined') {
-      try {
-        const web3Instance = new Web3(window.ethereum);
-        const accounts = await web3Instance.eth.getAccounts();
-        if (accounts.length > 0) {
-          setWeb3(web3Instance);
-          setAccount(accounts[0]);
-          setIsConnected(true);
-        }
-      } catch (error) {
-        console.error('Error checking wallet connection:', error);
-      }
+  useAccountEffect({
+    onConnect(data) {
+      console.log("Connected!", {
+        address: data.address,
+        chainId: data.chainId,
+        isReconnected: data.isReconnected
+      });
+    },
+    onDisconnect() {
+      console.log("Disconnected!");
     }
-  };
+  });
 
-  const connectWallet = async () => {
-    if (typeof window.ethereum !== 'undefined') {
-      try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const web3Instance = new Web3(window.ethereum);
-        const accounts = await web3Instance.eth.getAccounts();
-        
-        setWeb3(web3Instance);
-        setAccount(accounts[0]);
-        setIsConnected(true);
-      } catch (error) {
-        console.error('Error connecting to wallet:', error);
-      }
-    } else {
-      alert('Please install MetaMask to use this feature');
+  const connectWallet = () => {
+    if (connectors.length > 0) {
+      connect({ connector: connectors[0] });
     }
   };
 
   const disconnectWallet = () => {
-    setWeb3(null);
-    setAccount(null);
-    setIsConnected(false);
+    disconnect();
   };
 
   return (
-    <Web3Context.Provider value={{
-      web3,
-      account,
-      isConnected,
-      connectWallet,
-      disconnectWallet
-    }}>
+    <Web3Context.Provider value={{ address, isConnected: !!isConnected, connectWallet, disconnectWallet }}>
       {children}
     </Web3Context.Provider>
+  );
+};
+
+export const useWeb3 = () => {
+  const context = useContext(Web3Context);
+  if (!context) throw new Error("useWeb3 must be used within a Web3Provider");
+  return context;
+};
+
+export const ConnectWallet: React.FC = () => {
+  const { address, isConnected, disconnectWallet } = useWeb3();
+  const { connectors, connect, isPending } = useConnect();
+
+  if (isConnected && address) {
+    return (
+      <div>
+        <div>Connected to {address}</div>
+        <button onClick={disconnectWallet}>Disconnect</button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {connectors.map((connector) => (
+        <button
+          key={connector.uid}
+          onClick={() => connect({ connector })}
+          disabled={isPending}
+        >
+          {isPending ? "Connecting..." : `Connect ${connector.name}`}
+        </button>
+      ))}
+    </div>
   );
 };
