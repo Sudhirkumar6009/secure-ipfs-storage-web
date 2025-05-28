@@ -16,45 +16,56 @@ import NotFound from "./pages/NotFound";
 import { Web3Provider } from "./contexts/Web3Context";
 import { WagmiProvider, createConfig, http } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
+import { useMemo } from 'react';
 
-const queryClient = new QueryClient();
 const wagmiConfig = createConfig({
-  chains: [mainnet, sepolia], // add your chains here
+  chains: [mainnet, sepolia],
   transports: {
     [mainnet.id]: http(),
     [sepolia.id]: http(),
   },
 });
-const App = () => (
-   <QueryClientProvider client={queryClient}>
-    <WagmiProvider config={wagmiConfig}>
-      <TooltipProvider>
-        <ThemeProvider>
-          <Web3Provider>
-            <AuthProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <div className="min-h-screen flex flex-col">
-                  <Navbar />
-                  <main className="flex-1 pt-16">
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/signup" element={<Signup />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                  <Footer />
-                </div>
-              </BrowserRouter>
-             </AuthProvider>
-          </Web3Provider>
-        </ThemeProvider>
-      </TooltipProvider>
-    </WagmiProvider>
-  </QueryClientProvider>
-);
+
+const App = () => {
+  const queryClient = useMemo(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000,
+      },
+    },
+  }), []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <TooltipProvider>
+          <ThemeProvider>
+            <Web3Provider>
+              <AuthProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <div className="min-h-screen flex flex-col">
+                    <Navbar />
+                    <main className="flex-1 pt-16">
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </main>
+                    <Footer />
+                  </div>
+                </BrowserRouter>
+              </AuthProvider>
+            </Web3Provider>
+          </ThemeProvider>
+        </TooltipProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
