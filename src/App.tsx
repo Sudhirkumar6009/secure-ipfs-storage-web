@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,7 +17,6 @@ import NotFound from "./pages/NotFound";
 import { Web3Provider } from "./contexts/Web3Context";
 import { WagmiProvider, createConfig, http } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
-import { useMemo } from 'react';
 
 const wagmiConfig = createConfig({
   chains: [mainnet, sepolia],
@@ -26,15 +26,15 @@ const wagmiConfig = createConfig({
   },
 });
 
-const App = () => {
-  const queryClient = useMemo(() => new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 60 * 1000,
-      },
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
     },
-  }), []);
+  },
+});
 
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiProvider config={wagmiConfig}>
