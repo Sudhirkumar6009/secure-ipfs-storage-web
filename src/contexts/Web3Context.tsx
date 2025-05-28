@@ -1,8 +1,10 @@
+
 import React, { createContext, useContext } from 'react';
 import { useAccount, useConnect, useDisconnect, useAccountEffect } from "wagmi";
 
 interface IWeb3Context {
   address?: string;
+  account?: string; // Add this for backward compatibility
   isConnected: boolean;
   connectWallet: () => void;
   disconnectWallet: () => void;
@@ -39,7 +41,13 @@ export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <Web3Context.Provider value={{ address, isConnected: !!isConnected, connectWallet, disconnectWallet }}>
+    <Web3Context.Provider value={{ 
+      address, 
+      account: address, // Provide account as alias for address
+      isConnected: !!isConnected, 
+      connectWallet, 
+      disconnectWallet 
+    }}>
       {children}
     </Web3Context.Provider>
   );

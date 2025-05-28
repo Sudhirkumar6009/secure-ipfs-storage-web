@@ -5,8 +5,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { useWeb3 } from '@/contexts/Web3Context';
-import Dropdown from 'react-bootstrap/Dropdown';
-
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
@@ -16,7 +14,7 @@ const Navbar = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
- useEffect(() => {
+  useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDropdownOpen(false);
