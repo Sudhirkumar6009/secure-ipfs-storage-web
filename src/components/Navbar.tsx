@@ -105,7 +105,7 @@ const Navbar = () => {
         theme === 'dark' ? 'text-[#00BFFF]' : 'text-[#00BFFF]'
       }`}
     >
-      StorageX
+      SpaceX
     </Link>
 
     {/* Right section - Auth buttons and theme toggle */}
