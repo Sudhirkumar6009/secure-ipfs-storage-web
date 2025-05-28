@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
@@ -130,17 +131,23 @@ const Navbar = () => {
       <div className="flex items-center space-x-4">
         {isConnected && address ? (
           <DropdownMenu>
-            <button className="block text-left w-full px-4 py-2 text-black hover:bg-[#00BFFF] dark:hover:text-white dark:text-white">
+            <Link 
+              to="/profile"
+              className="block text-left w-full px-4 py-2 text-black hover:bg-[#00BFFF] hover:text-white dark:hover:text-white dark:text-white"
+            >
               Manage Profile
+            </Link>
+            <Link 
+              to="/dashboard"
+              className="block text-left w-full px-4 py-2 text-black hover:bg-[#00BFFF] hover:text-white dark:hover:text-white dark:text-white"
+            >
+              Dashboard
+            </Link>
+            <button className="block text-left w-full px-4 py-2 text-black hover:bg-[#00BFFF] dark:hover:text-white dark:text-white">
+              Settings
             </button>
             <button className="block text-left w-full px-4 py-2 text-black hover:bg-[#00BFFF] dark:hover:text-white dark:text-white">
-              Option 2
-            </button>
-            <button className="block text-left w-full px-4 py-2 text-black hover:bg-[#00BFFF] dark:hover:text-white dark:text-white">
-              Option 3
-            </button>
-            <button className="block text-left w-full px-4 py-2 text-black hover:bg-[#00BFFF] dark:hover:text-white dark:text-white">
-              Option 4
+              Help
             </button>
             <button
               onClick={disconnectWallet}
